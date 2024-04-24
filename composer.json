@@ -52,7 +52,7 @@
     "developer": "PutYourLightsOn",
     "developerUrl": "https://putyourlightson.com/",
     "documentationUrl": "https://github.com/putyourlightson/craft-blitz-f5",
-    "changelogUrl": "https://raw.githubusercontent.com/putyourlightson/craft-blitz-f5/main/CHANGELOG.md",
+    "changelogUrl": "https://raw.githubusercontent.com/putyourlightson/craft-blitz-f5/develop/CHANGELOG.md",
     "class": "putyourlightson\\blitzf5\\Plugin"
   }
 }
