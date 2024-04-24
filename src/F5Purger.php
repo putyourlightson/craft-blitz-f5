@@ -23,7 +23,10 @@ use yii\base\Event;
  */
 class F5Purger extends BaseCachePurger
 {
-    public const API_ENDPOINT = 'https://docs.cloud.f5.com/api/cdn/namespaces/';
+    /**
+     * @var string
+     */
+    public string $baseUrl = '';
 
     /**
      * @var string
@@ -34,6 +37,12 @@ class F5Purger extends BaseCachePurger
      * @var string
      */
     public string $name = '';
+
+    /**
+     * Whether to remove the content from the distribution, forcing the next request to retrieve the content from the origin server. With this off, the content will be replaced on the next request if the content is stale.
+     * https://docs.cloud.f5.com/docs-v2/content-delivery-network/how-to/configure-cdn-distribution
+     */
+    public bool $hardPurge = true;
 
     /**
      * @inheritdoc
@@ -64,6 +73,7 @@ class F5Purger extends BaseCachePurger
         $behaviors['parser'] = [
             'class' => EnvAttributeParserBehavior::class,
             'attributes' => [
+                'baseUrl',
                 'namespace',
                 'name',
             ],
@@ -75,10 +85,20 @@ class F5Purger extends BaseCachePurger
     /**
      * @inheritdoc
      */
+    public function attributeLabels(): array
+    {
+        return [
+            'baseUrl' => Craft::t('blitz-f5', 'Base URL'),
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function rules(): array
     {
         return [
-            [['namespace', 'name'], 'required'],
+            [['baseUrl', 'namespace', 'name'], 'required'],
         ];
     }
 
@@ -97,7 +117,7 @@ class F5Purger extends BaseCachePurger
         }
 
         $pattern = $this->getCondensedUriPattern($siteUris);
-        $this->sendRequest($this->getPurgeUri(), $this->getPurgeParams($pattern));
+        $this->sendRequest($pattern);
 
         $count = $total;
 
@@ -119,7 +139,7 @@ class F5Purger extends BaseCachePurger
             return;
         }
 
-        $this->sendRequest($this->getPurgeUri(), $this->getPurgeParams('*'));
+        $this->sendRequest('*');
 
         if ($this->hasEventHandlers(self::EVENT_AFTER_PURGE_ALL_CACHE)) {
             $this->trigger(self::EVENT_AFTER_PURGE_ALL_CACHE, $event);
@@ -152,7 +172,7 @@ class F5Purger extends BaseCachePurger
 
     /**
      * Returns a condensed URI pattern by eagerly adding a wildcard character.
-     * This method returns a single URL with a wildcard character after the longest common prefix.
+     * This method returns a single URI with a wildcard character after the longest common prefix.
      *
      * @param SiteUriModel[] $siteUris
      */
@@ -186,48 +206,39 @@ class F5Purger extends BaseCachePurger
     }
 
     /**
-     * Returns the purge URI.
-     */
-    private function getPurgeUri(): string
-    {
-        return 'cdn_loadbalancer/' . App::parseEnv($this->name) . '/cache-purge';
-    }
-
-    /**
      * Sends a request to the API.
+     * https://docs.cloud.f5.com/docs-v2/api/views-cdn-loadbalancer#operation/ves.io.schema.views.cdn_loadbalancer.CustomAPI.CDNCachePurge
      */
-    private function sendRequest(string $uri, array $params = []): ?ResponseInterface
+    private function sendRequest(string $pattern): ?ResponseInterface
     {
         $response = null;
 
         $client = Craft::createGuzzleClient([
-            'base_uri' => self::API_ENDPOINT,
+            'base_uri' => $this->baseUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
         ]);
 
-        $uri = App::parseEnv($this->namespace) . '/' . $uri;
-        $options = !empty($params) ? ['json' => $params] : [];
+        $baseUrl = rtrim('/', $this->baseUrl) . '/';
+        $url = $baseUrl . 'api/cdn/namespaces/' . App::parseEnv($this->namespace) . '/cdn_loadbalancer/' . App::parseEnv($this->name) . '/cache-purge';
+
+        $options = [
+            'json' => [
+                'pattern' => $pattern,
+            ],
+        ];
+        if ($this->hardPurge) {
+            $options['json']['hard'] = [];
+        } else {
+            $options['json']['soft'] = [];
+        }
 
         try {
-            $response = $client->request('POST', $uri, $options);
+            $response = $client->request('POST', $url, $options);
         } catch (BadResponseException|GuzzleException) {
         }
 
         return $response;
-    }
-
-    /**
-     * Returns the purge parameters.
-     * https://docs.cloud.f5.com/docs/api/views-cdn-loadbalancer#operation/ves.io.schema.views.cdn_loadbalancer.CustomAPI.CDNCachePurge
-     */
-    private function getPurgeParams(string $pattern): array
-    {
-        return [
-            // 'hard_purge' => [],
-            'pattern' => $pattern,
-            // 'soft_purge' => [],
-        ];
     }
 }
