@@ -1,0 +1,58 @@
+{
+  "name": "putyourlightson/craft-blitz-f5",
+  "description": "F5 cache purger for the Blitz plugin.",
+  "version": "0.0.1",
+  "type": "craft-plugin",
+  "homepage": "https://putyourlightson.com/plugins/blitz",
+  "license": "proprietary",
+  "keywords": [
+    "craftcms",
+    "key",
+    "cdn",
+    "cache",
+    "blitz",
+    "purger"
+  ],
+  "require": {
+    "php": "^8.2",
+    "craftcms/cms": "^5.0",
+    "putyourlightson/craft-blitz": "^5.0"
+  },
+  "require-dev": {
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main"
+  },
+  "scripts": {
+    "phpstan": "phpstan --ansi --memory-limit=1G",
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --fix --ansi"
+  },
+  "autoload": {
+    "psr-4": {
+      "putyourlightson\\blitzf5\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "craftcms/plugin-installer": true,
+      "pestphp/pest-plugin": true,
+      "yiisoft/yii2-composer": true
+    },
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "support": {
+    "docs": "https://github.com/putyourlightson/craft-blitz-f5",
+    "source": "https://github.com/putyourlightson/craft-blitz-f5",
+    "issues": "https://github.com/putyourlightson/craft-blitz-f5/issues"
+  },
+  "extra": {
+    "name": "Blitz F5 Purger",
+    "handle": "blitz-f5",
+    "developer": "PutYourLightsOn",
+    "developerUrl": "https://putyourlightson.com/",
+    "documentationUrl": "https://github.com/putyourlightson/craft-blitz-f5",
+    "changelogUrl": "https://raw.githubusercontent.com/putyourlightson/craft-blitz-f5/main/CHANGELOG.md",
+    "class": "putyourlightson\\blitzf5\\Plugin"
+  }
+}

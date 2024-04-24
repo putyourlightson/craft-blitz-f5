@@ -1,0 +1,23 @@
+{% import '_includes/forms' as forms %}
+
+{{ forms.autosuggestField({
+    label: 'Namespace'|t('blitz-f5'),
+    instructions: 'The namespace.'|t('blitz-f5'),
+    suggestEnvVars: true,
+    suggestions: craft.cp.getEnvSuggestions(),
+    name: 'namespace',
+    value: purger.namespace,
+    errors: purger.getErrors('namespace'),
+    required: true,
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Name'|t('blitz-f5'),
+    instructions: 'The CDN distribution name.'|t('blitz-f5'),
+    suggestEnvVars: true,
+    suggestions: craft.cp.getEnvSuggestions(),
+    name: 'name',
+    value: purger.name,
+    errors: purger.getErrors('name'),
+    required: true,
+}) }}
