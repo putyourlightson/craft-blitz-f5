@@ -1,3 +1,5 @@
+<p align="center"><img width="130" src="https://raw.githubusercontent.com/putyourlightson/craft-blitz-f5/main/src/icon.svg"></p>
+
 # Blitz F5 Purger for Craft CMS
 
 The F5 Purger plugin allows the [Blitz](https://putyourlightson.com/plugins/blitz) plugin for [Craft CMS](https://craftcms.com/) to intelligently purge pages cached on F5’s Edge CDN.
