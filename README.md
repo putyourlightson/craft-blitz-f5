@@ -31,8 +31,6 @@ For example, if the URIs are:
 
 Then only a single API request will be sent with the URI pattern `/foo/*`.
 
-The API request will send the URI pattern `/foo/*`.
-
 ---
 
 Created by [PutYourLightsOn](https://putyourlightson.com/).
