@@ -26,8 +26,8 @@ Note that when purging multiple cached pages, only a single URI with a wildcard 
 
 For example, if the URIs are:
 
-- /foo/bar
-- /foo/qux/baz
+- `/foo/bar`
+- `/foo/qux/baz`
 
 Then only a single API request will be sent with the URI pattern `/foo/*`.
 

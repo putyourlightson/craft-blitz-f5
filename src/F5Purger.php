@@ -175,8 +175,8 @@ class F5Purger extends BaseCachePurger
      *
      * This method returns a single URI with a wildcard character after the longest common prefix.
      * For example, if the URIs are:
-     * - /foo/bar
-     * - /foo/qux/baz
+     * - `/foo/bar`
+     * - `/foo/qux/baz`
      *
      * The method will return `/foo/*`.
      *
