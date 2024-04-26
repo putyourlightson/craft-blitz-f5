@@ -20,6 +20,17 @@ Once installed, the F5 Purger can be selected in the Blitz plugin settings or in
 
 ```
 
+Note that when purging multiple cached pages, only a single URI with a wildcard character after the longest common prefix is sent. This helps reduce the number of API requests made to the F5 CDN.
+
+For example, if the URIs are:
+
+- /foo/bar
+- /foo/qux/baz
+
+Then only a single API request will be sent with the URI pattern `/foo/*`.
+
+The API request will send the URI pattern `/foo/*`.
+
 ---
 
 Created by [PutYourLightsOn](https://putyourlightson.com/).

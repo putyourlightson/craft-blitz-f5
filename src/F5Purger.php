@@ -12,17 +12,23 @@ use craft\helpers\App;
 use craft\web\View;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
-use Psr\Http\Message\ResponseInterface;
+use putyourlightson\blitz\Blitz;
 use putyourlightson\blitz\drivers\purgers\BaseCachePurger;
 use putyourlightson\blitz\events\RefreshCacheEvent;
 use putyourlightson\blitz\models\SiteUriModel;
 use yii\base\Event;
+use yii\log\Logger;
 
 /**
  * @property-read null|string $settingsHtml
  */
 class F5Purger extends BaseCachePurger
 {
+    /**
+     * @const int The timeout for API requests in seconds.
+     */
+    public const API_REQUEST_TIMEOUT = 10;
+
     /**
      * @var string
      */
@@ -151,13 +157,7 @@ class F5Purger extends BaseCachePurger
      */
     public function test(): bool
     {
-        $response = $this->sendRequest('list-service-operations-status');
-
-        if (!$response) {
-            return false;
-        }
-
-        return $response->getStatusCode() == 200;
+        return $this->sendRequest('test-purge');
     }
 
     /**
@@ -172,7 +172,13 @@ class F5Purger extends BaseCachePurger
 
     /**
      * Returns a condensed URI pattern by eagerly adding a wildcard character.
+     *
      * This method returns a single URI with a wildcard character after the longest common prefix.
+     * For example, if the URIs are:
+     * - /foo/bar
+     * - /foo/qux/baz
+     *
+     * The method will return `/foo/*`.
      *
      * @param SiteUriModel[] $siteUris
      */
@@ -206,18 +212,17 @@ class F5Purger extends BaseCachePurger
     }
 
     /**
-     * Sends a request to the API.
+     * Sends a purge request to the API.
      * https://docs.cloud.f5.com/docs-v2/api/views-cdn-loadbalancer#operation/ves.io.schema.views.cdn_loadbalancer.CustomAPI.CDNCachePurge
      */
-    private function sendRequest(string $pattern): ?ResponseInterface
+    private function sendRequest(string $pattern): bool
     {
-        $response = null;
-
         $client = Craft::createGuzzleClient([
             'base_uri' => $this->baseUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
+            'timeout' => self::API_REQUEST_TIMEOUT,
         ]);
 
         $baseUrl = rtrim('/', $this->baseUrl) . '/';
@@ -228,6 +233,11 @@ class F5Purger extends BaseCachePurger
                 'pattern' => $pattern,
             ],
         ];
+
+        /**
+         * TODO: verify that this is the correct way to handle hard/soft purges, which the API docs aren’t clear on.
+         * https://docs.cloud.f5.com/docs-v2/api/views-cdn-loadbalancer#operation/ves.io.schema.views.cdn_loadbalancer.CustomAPI.CDNCachePurge
+         */
         if ($this->hardPurge) {
             $options['json']['hard'] = [];
         } else {
@@ -235,10 +245,13 @@ class F5Purger extends BaseCachePurger
         }
 
         try {
-            $response = $client->request('POST', $url, $options);
-        } catch (BadResponseException|GuzzleException) {
+            $client->request('POST', $url, $options);
+        } catch (BadResponseException|GuzzleException $exception) {
+            Blitz::$plugin->log($exception->getMessage(), [], Logger::LEVEL_ERROR);
+
+            return false;
         }
 
-        return $response;
+        return true;
     }
 }
