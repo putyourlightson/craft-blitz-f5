@@ -101,6 +101,7 @@ class F5Purger extends BaseCachePurger
     {
         return [
             'baseUrl' => Craft::t('blitz-f5', 'Base URL'),
+            'apiToken' => Craft::t('blitz-f5', 'API Token'),
         ];
     }
 
@@ -110,7 +111,7 @@ class F5Purger extends BaseCachePurger
     public function rules(): array
     {
         return [
-            [['baseUrl', 'namespace', 'name'], 'required'],
+            [['baseUrl', 'namespace', 'name', 'apiToken'], 'required'],
         ];
     }
 
