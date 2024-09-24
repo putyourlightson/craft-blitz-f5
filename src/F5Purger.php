@@ -87,6 +87,7 @@ class F5Purger extends BaseCachePurger
                 'baseUrl',
                 'namespace',
                 'name',
+                'apiToken',
             ],
         ];
 

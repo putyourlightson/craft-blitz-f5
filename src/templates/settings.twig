@@ -15,7 +15,7 @@
 {{ forms.autosuggestField({
     label: 'Namespace'|t('blitz-f5'),
     instructions: 'The CDN namespace.'|t('blitz-f5'),
-    placeholder: 'system',
+    placeholder: 'namespace',
     suggestEnvVars: true,
     suggestions: craft.cp.getEnvSuggestions(),
     name: 'namespace',
@@ -38,7 +38,7 @@
 {{ forms.autosuggestField({
     label: 'API Token'|t('blitz-f5'),
     instructions: 'The API token.'|t('blitz-f5'),
-    placeholder: 'system',
+    placeholder: 'API Token',
     suggestEnvVars: true,
     suggestions: craft.cp.getEnvSuggestions(),
     name: 'apiToken',
