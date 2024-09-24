@@ -35,6 +35,18 @@
     required: true,
 }) }}
 
+{{ forms.autosuggestField({
+    label: 'API Token'|t('blitz-f5'),
+    instructions: 'The API token.'|t('blitz-f5'),
+    placeholder: 'system',
+    suggestEnvVars: true,
+    suggestions: craft.cp.getEnvSuggestions(),
+    name: 'apiToken',
+    value: purger.apiToken,
+    errors: purger.getErrors('namespace'),
+    required: true,
+}) }}
+
 {{ forms.lightswitchField({
     label: 'Hard Purge'|t('blitz-f5'),
     instructions: 'Whether to remove the content from the distribution, forcing the next request to retrieve the content from the origin server. With this off, the content will be replaced on the next request if the content is stale.'|t('blitz-f5'),

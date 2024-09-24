@@ -45,6 +45,11 @@ class F5Purger extends BaseCachePurger
     public string $name = '';
 
     /**
+     * @var string
+     */
+    public string $apiToken = '';
+
+    /**
      * Whether to remove the content from the distribution, forcing the next request to retrieve the content from the origin server. With this off, the content will be replaced on the next request if the content is stale.
      * https://docs.cloud.f5.com/docs-v2/content-delivery-network/how-to/configure-cdn-distribution
      */
@@ -221,6 +226,7 @@ class F5Purger extends BaseCachePurger
             'base_uri' => $this->baseUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
+                'Authorization' => 'APIToken ' . $this->apiToken,
             ],
             'timeout' => self::API_REQUEST_TIMEOUT,
         ]);
