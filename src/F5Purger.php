@@ -225,15 +225,14 @@ class F5Purger extends BaseCachePurger
     private function sendRequest(string $pattern): bool
     {
         $client = Craft::createGuzzleClient([
-            'base_uri' => $this->baseUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
-                'Authorization' => 'APIToken ' . $this->apiToken,
+                'Authorization' => 'APIToken ' . App::parseEnv($this->apiToken),
             ],
             'timeout' => self::API_REQUEST_TIMEOUT,
         ]);
 
-        $baseUrl = rtrim('/', $this->baseUrl) . '/';
+        $baseUrl = rtrim(App::parseEnv($this->baseUrl), '/') . '/';
         $url = $baseUrl . 'api/cdn/namespaces/' . App::parseEnv($this->namespace) . '/cdn_loadbalancer/' . App::parseEnv($this->name) . '/cache-purge';
 
         $options = [
