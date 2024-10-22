@@ -193,8 +193,8 @@ class F5Purger extends BaseCachePurger
     {
         $uris = array_map(fn($siteUri) => $siteUri->uri, $siteUris);
 
-        if (count($uris) < 2) {
-            return $uris[0];
+        if (count($uris) === 1) {
+            return $uris[0] ?? '';
         }
 
         // Get the longest common prefix between the two most dissimilar strings.

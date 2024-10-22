@@ -1,7 +1,7 @@
 {
   "name": "putyourlightson/craft-blitz-f5",
   "description": "F5 cache purger for the Blitz plugin.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "craft-plugin",
   "homepage": "https://putyourlightson.com/plugins/blitz",
   "license": "proprietary",
